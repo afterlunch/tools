@@ -1,0 +1,183 @@
+import tkinter as tk
+import random
+import time
+import base64
+from Crypto.Cipher import AES
+import base64
+from icoooon import img
+from tkinter import messagebox, filedialog
+import os
+root= tk.Tk()
+picture = open("picture.ico", "wb+")
+picture.write(base64.b64decode(img))
+picture.close()
+root.iconbitmap('picture.ico')
+os.remove("picture.ico")
+
+root.title('patools  密码生成工具 内部使用版 作者张中杰:zwx1130317')
+def add_to_32(value):
+    while len(value) % 32 != 0:
+        value += '\0'
+    return str.encode(value)  # 返回bytes
+ 
+def add_to_16(value):
+    while len(value) % 16 != 0:
+        value += '\0'
+    return str.encode(value)  # 返回bytes
+ 
+
+# 读取base64转码后的数据，并设置压缩图标
+###
+
+root.title('Patools  ')
+
+canvas1 = tk.Canvas(root, width=400, height=320, relief='raised')
+canvas1.pack()
+#
+
+label1 = tk.Label(root, text='密码生成&加密&解密工具,已去除易混淆字母')
+label1.config(font=('黑体', 12))
+canvas1.create_window(200, 20, window=label1)
+#
+
+label2 = tk.Label(root, text='请输入需要生成多少条密码 (不填默认为1)')
+label2.config(font=('helvetica', 10))
+canvas1.create_window(200, 60, window=label2)
+entry1 = tk.Entry(root) 
+canvas1.create_window(200, 78, window=entry1)
+#
+
+label3 = tk.Label(root, text='请输入生成密码开头大写字母的长度 1-19之间 (不填默认为1)' )
+label3.config(font=('helvetica', 10))
+canvas1.create_window(200, 100, window=label3)
+entry2 = tk.Entry(root) 
+canvas1.create_window(200, 120, window=entry2)
+#canvas1.create_window(200, 550, window=nnn)
+
+
+label3 = tk.Label(root, text='请输入需要加密的内容' )
+label3.config(font=('helvetica', 9))
+canvas1.create_window(30, 195, window=label3)
+jiamia = tk.Entry(root) 
+canvas1.create_window(160, 195, window=jiamia)
+#canvas1.create_window(200, 550, window=nnn)
+
+label3 = tk.Label(root, text='请输入需要解密的内容' )
+label3.config(font=('helvetica', 9))
+canvas1.create_window(30, 220, window=label3)
+jiemib = tk.Entry(root) 
+canvas1.create_window(160, 220, window=jiemib)
+#canvas1.create_window(200, 550, window=nnn)
+
+
+def ma():
+    f = random.sample('ABCDEFHIKMNPQRSTUVWXYZ',int(entry2.get()or 1))
+    a = random.sample('abcdefhikmnpqrstuvwxyz',2)
+    b = random.sample('ABCDEFHIKMNPQRSTUVWXYZ',2)
+    g = random.sample('02356789',3)
+    c = random.sample('.+-=',1)
+    g = random.sample(c + a + g ,6)
+    d = "".join( f + g +  b )
+    list_box.insert(tk.END, d)
+    return d
+def xshu():
+    i  = int(entry1.get() or 1)
+    nowtime = time.strftime('%m月%d日%H点%M分%S秒',time.localtime(time.time()))
+    file = open(nowtime + '_pw.txt', 'w')
+    for num in range(0,i):
+            file.write(str(ma())  + '\n')              
+    file.close()
+    label4 = tk.Label(root, text= str(i) + ' 条密码密码已生成   已写入'+ nowtime + '_pw.txt文件')
+    canvas1.create_window(200, 240, window=label4)
+    
+def get_square_root():
+    x1 = entry1.get()
+    xshu()
+#加密方法
+def encrypt_oracle():
+    textone = str(jiamia.get() or '1')
+    # 秘钥
+    key = 'www.huawei.com'
+    # 待加密文本
+    # 初始化加密器
+    aes = AES.new(add_to_16(key), AES.MODE_ECB)
+    #先进行aes加密
+    encrypt_aes = aes.encrypt(add_to_16(textone))
+    #用base64转成字符串形式
+    encrypted_text = str(base64.encodebytes(encrypt_aes), encoding='utf-8')  # 执行加密并转码返回bytes
+    #print('加密后为'+ encrypted_text)
+    #label4 = tk.Label(root, text= str(encrypted_text)+ '加密后为'+ encrypted_text)
+    #canvas1.create_window(100, 300, window=label4)
+    list_box.insert(tk.END, encrypted_text)
+    return encrypted_text
+#解密方法
+def decrypt_oralce():
+    # 秘钥
+    texttow = str(jiemib.get() or 'Lt+4ENPNX9zVrugc9oyR7g==')
+    key = 'www.huawei.com'
+    # 密文
+    # 初始化加密器
+    aes = AES.new(add_to_16(key), AES.MODE_ECB)
+    #优先逆向解密base64成bytes
+    base64_decrypted = base64.decodebytes(texttow.encode(encoding='utf-8'))
+    #执行解密密并转码返回str
+    decrypted_text = str(aes.decrypt(base64_decrypted),encoding='utf-8').replace('\0','')
+    #label4 = tk.Label(root, text= str(decrypted_text)+ '解密后为'+ decrypted_text)
+    #canvas1.create_window(100, 300, window=label4)
+    list_box.insert(tk.END, decrypted_text)
+    #return encrypted_text
+    return decrypted_text
+def jiamipass():
+    a = jiamia.get()
+    encrypt_oracle() 
+def jiemipass():
+    b = jiemib.get()
+    decrypt_oralce() 
+def onema():
+    f = random.sample('ABCDEFHIKMNPQRSTUVWXYZ',int(entry2.get()or 1))
+    a = random.sample('abcdefhikmnpqrstuvwxyz',2)
+    b = random.sample('ABCDEFHIKMNPQRSTUVWXYZ',2)
+    g = random.sample('02356789',3)
+    c = random.sample('.+-=',1)
+    g = random.sample(c + a + g ,6)
+    d = "".join( f + g +  b )
+    list_box.insert(tk.END, d)
+    textone = str(d)
+    # 秘钥
+    key = 'www.huawei.com'
+    # 待加密文本
+    # 初始化加密器
+    aes = AES.new(add_to_16(key), AES.MODE_ECB)
+    #先进行aes加密
+    encrypt_aes = aes.encrypt(add_to_16(textone))
+    #用base64转成字符串形式
+    encrypted_text = str(base64.encodebytes(encrypt_aes), encoding='utf-8')  # 执行加密并转码返回bytes
+    #print('加密后为'+ encrypted_text)
+    #label4 = tk.Label(root, text= str(encrypted_text)+ '加密后为'+ encrypted_text)
+    #canvas1.create_window(100, 300, window=label4)
+    list_box.insert(tk.END, encrypted_text)
+    return encrypted_text
+
+button1 = tk.Button(text='生成密码', command=get_square_root, bg='brown', fg='white', font=('helvetica', 9, 'bold'))
+canvas1.create_window(200, 150, window=button1)
+button1 = tk.Button(text='生成1位密码并加密', command=onema, bg='brown', fg='white', font=('helvetica', 9, 'bold'))
+canvas1.create_window(10, 150, window=button1)
+
+button1 = tk.Button(text='加密', command=jiamipass, bg='brown', fg='white', font=('helvetica', 9, 'bold'))
+canvas1.create_window(100, 300, window=button1)
+
+button1 = tk.Button(text='解密', command=jiemipass, bg='brown', fg='white', font=('helvetica', 9, 'bold'))
+canvas1.create_window(290, 300, window=button1)
+
+
+
+list_box = tk.Listbox(root, width=80)
+list_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+sb = tk.Scrollbar(root)
+sb.pack(side=tk.RIGHT, fill=tk.Y)
+list_box.config(yscrollcommand=sb.set)
+sb.config(command=list_box.yview)
+
+
+
+root.mainloop()
